@@ -1,0 +1,35 @@
+{
+  "rules": {
+    "tasks": {
+      ".read": true,
+      ".write": true,
+      "$taskId": {
+        ".validate": "newData.hasChildren(['title', 'status', 'createdBy', 'createdAt'])",
+        "title": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "description": {
+          ".validate": "newData.isString()"
+        },
+        "status": {
+          ".validate": "newData.isString() && newData.val().matches(/^(todo|in-progress|completed|verified)$/)"
+        },
+        "createdBy": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "completedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "verifiedAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+} 
