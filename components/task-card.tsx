@@ -132,7 +132,7 @@ export function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardPro
       className="relative"
     >
       <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300 group overflow-hidden">
-        <CardContent className="p-4">
+        <CardContent className="p-3 sm:p-4">
           {/* Header with Status Badge and Menu */}
           <div className="flex items-center justify-between mb-3">
             <motion.div
@@ -161,7 +161,7 @@ export function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardPro
               <div className="relative">
                 <motion.button
                   onClick={() => setShowMenu(!showMenu)}
-                  className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 opacity-0 group-hover:opacity-100 transition-all duration-200"
+                  className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
@@ -236,7 +236,7 @@ export function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardPro
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.15 }}
-            className="font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2"
+            className="font-semibold text-sm sm:text-base text-gray-900 dark:text-gray-100 mb-2 line-clamp-2"
           >
             {task.title}
           </motion.h3>
@@ -247,7 +247,7 @@ export function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardPro
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2"
+              className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-2 sm:mb-3 line-clamp-2"
             >
               {task.description}
             </motion.p>
@@ -258,7 +258,7 @@ export function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardPro
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.25 }}
-            className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-4"
+            className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3 sm:mb-4"
           >
             <div className="flex items-center gap-1 min-w-0">
               <User className="w-3 h-3 flex-shrink-0" />
@@ -273,7 +273,7 @@ export function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardPro
           </motion.div>
 
           {/* Action Buttons Row */}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 sm:gap-2">
             {/* Back Button */}
             {backAction && (
               <motion.div
@@ -288,10 +288,11 @@ export function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardPro
                   onClick={backAction.action}
                   variant="outline"
                   size="sm"
-                  className="w-full border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="w-full border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 text-xs sm:text-sm"
                 >
-                  <ArrowLeft className="w-4 h-4 mr-1" />
-                  Back
+                  <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                  <span className="hidden sm:inline">Back</span>
+                  <span className="sm:hidden">←</span>
                 </Button>
               </motion.div>
             )}
@@ -312,15 +313,15 @@ export function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardPro
                   }}
                   variant={nextAction.variant}
                   size="sm"
-                  className={`w-full transition-all duration-300 ${nextAction.className} hover:shadow-md`}
+                  className={`w-full transition-all duration-300 ${nextAction.className} hover:shadow-md text-xs sm:text-sm`}
                 >
                   <motion.div
                     className="flex items-center justify-center"
                     whileHover={{ x: 2 }}
                     transition={{ type: "spring", stiffness: 400 }}
                   >
-                    <nextAction.icon className="w-4 h-4 mr-2" />
-                    {nextAction.label}
+                    <nextAction.icon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    <span className="truncate">{nextAction.label}</span>
                   </motion.div>
                 </Button>
               </motion.div>
@@ -333,7 +334,7 @@ export function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardPro
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4, type: "spring", stiffness: 300 }}
-              className="mt-3 text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1"
+              className="mt-2 sm:mt-3 text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1"
             >
               <Check className="w-3 h-3" />
               <span>Completed {formatDistanceToNow(task.completedAt, { addSuffix: true })}</span>
@@ -346,7 +347,7 @@ export function TaskCard({ task, onStatusChange, onDelete, onEdit }: TaskCardPro
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4, type: "spring", stiffness: 300 }}
-              className="mt-3 text-xs text-violet-600 dark:text-violet-400 flex items-center gap-1"
+              className="mt-2 sm:mt-3 text-xs text-violet-600 dark:text-violet-400 flex items-center gap-1"
             >
               <Shield className="w-3 h-3" />
               <span>Verified {formatDistanceToNow(task.verifiedAt, { addSuffix: true })}</span>

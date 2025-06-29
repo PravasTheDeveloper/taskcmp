@@ -296,7 +296,7 @@ export default function TaskBoard() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8">
         
         {/* Header */}
         <motion.div
@@ -304,23 +304,23 @@ export default function TaskBoard() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-3 sm:gap-4">
               <motion.div
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                className="p-3 bg-gradient-to-br from-blue-500 to-violet-600 rounded-2xl text-white shadow-lg"
+                className="p-2.5 sm:p-3 bg-gradient-to-br from-blue-500 to-violet-600 rounded-2xl text-white shadow-lg flex-shrink-0"
               >
-                <Zap className="w-8 h-8" />
+                <Zap className="w-6 h-6 sm:w-8 sm:h-8" />
               </motion.div>
               
-              <div>
+              <div className="min-w-0 flex-1">
                 <motion.h1 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent"
+                  className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 bg-clip-text text-transparent"
                 >
                   Task Board
                 </motion.h1>
@@ -328,14 +328,18 @@ export default function TaskBoard() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="text-gray-600 dark:text-gray-400 flex items-center gap-2"
+                  className="text-sm sm:text-base text-gray-600 dark:text-gray-400 flex items-center gap-2 flex-wrap"
                 >
-                  Collaborative task management • Real-time sync
-                  {isConnected ? (
-                    <Wifi className="w-4 h-4 text-emerald-500" />
-                  ) : (
-                    <WifiOff className="w-4 h-4 text-red-500" />
-                  )}
+                  <span>Collaborative task management</span>
+                  <span className="hidden sm:inline">•</span>
+                  <span className="flex items-center gap-1">
+                    Real-time sync
+                    {isConnected ? (
+                      <Wifi className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-500" />
+                    ) : (
+                      <WifiOff className="w-3 h-3 sm:w-4 sm:h-4 text-red-500" />
+                    )}
+                  </span>
                 </motion.p>
               </div>
             </div>
@@ -344,16 +348,17 @@ export default function TaskBoard() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
+              className="flex-shrink-0"
             >
               <Button 
                 onClick={() => {
                   setEditingTask(null)
                   setIsAddDialogOpen(true)
                 }}
-                className="bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 size="lg"
               >
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Add Task
               </Button>
             </motion.div>
@@ -364,7 +369,7 @@ export default function TaskBoard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4"
           >
             {[
               { 
@@ -404,16 +409,16 @@ export default function TaskBoard() {
                 whileHover={{ y: -2 }}
               >
                 <Card className="bg-white/70 dark:bg-gray-800/70 backdrop-blur border-gray-200 dark:border-gray-700">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${stat.bg}`}>
-                        <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className={`p-1.5 sm:p-2 rounded-lg ${stat.bg} flex-shrink-0`}>
+                        <stat.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${stat.color}`} />
                       </div>
-                      <div>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                           {stat.count}
                         </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">
                           {stat.label}
                         </p>
                       </div>
@@ -451,7 +456,7 @@ export default function TaskBoard() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6"
         >
           {[
             { 
@@ -493,13 +498,13 @@ export default function TaskBoard() {
                 transition={{ delay: 0.7 + columnIndex * 0.1 }}
               >
                 <Card className={`bg-white/80 dark:bg-gray-800/80 backdrop-blur border-t-4 ${column.color} h-fit`}>
-                  <CardHeader className={`${column.headerBg} border-b border-gray-200 dark:border-gray-700`}>
+                  <CardHeader className={`${column.headerBg} border-b border-gray-200 dark:border-gray-700 p-3 sm:p-6`}>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      <div className="min-w-0 flex-1 mr-2">
+                        <CardTitle className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
                           {column.title}
                         </CardTitle>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">
                           {column.description}
                         </p>
                       </div>
@@ -507,10 +512,11 @@ export default function TaskBoard() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.8 + columnIndex * 0.1, type: "spring", stiffness: 200 }}
+                        className="flex-shrink-0"
                       >
                         <Badge 
                           variant="secondary" 
-                          className="bg-white/80 dark:bg-gray-700/80 text-gray-700 dark:text-white font-semibold min-w-[2rem] justify-center"
+                          className="bg-white/80 dark:bg-gray-700/80 text-gray-700 dark:text-white font-semibold min-w-[1.5rem] sm:min-w-[2rem] justify-center text-xs sm:text-sm"
                         >
                           {columnTasks.length}
                         </Badge>
@@ -518,8 +524,8 @@ export default function TaskBoard() {
                     </div>
                   </CardHeader>
                   
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
+                  <CardContent className="p-3 sm:p-4">
+                    <div className="space-y-2 sm:space-y-3">
                       <AnimatePresence mode="popLayout">
                         {columnTasks.map((task, taskIndex) => (
                           <motion.div
