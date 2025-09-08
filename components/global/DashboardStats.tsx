@@ -79,3 +79,4 @@ export default function DashboardStats({ stats = defaultStats }: DashboardStatsP
     </div>
   )
 }
+

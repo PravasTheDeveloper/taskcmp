@@ -26,6 +26,7 @@ import {
   User,
 } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 interface AppSidebarProps {
   activeItem?: string
@@ -36,7 +37,7 @@ export default function AppSidebar({ activeItem = "dashboard" }: AppSidebarProps
     <Sidebar variant="inset" collapsible="offcanvas">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1.5">
-          <div className="size-7 rounded-md bg-gradient-to-r from-[var(--gradient-from)] to-[var(--gradient-to)]" />
+          <Image src="/assets/main_logo.png" alt="CMPTasks" width={28} height={28} className="rounded" />
           <span className="text-sm font-semibold tracking-wide">CMPTasks</span>
         </div>
       </SidebarHeader>

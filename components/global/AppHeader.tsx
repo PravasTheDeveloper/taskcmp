@@ -14,6 +14,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bell, Search, ChevronRight } from "lucide-react"
 import ThemeToggle from "@/components/global/ThemeToggle"
+import Image from "next/image"
 
 interface AppHeaderProps {
   showBrand?: boolean
@@ -34,7 +35,7 @@ export default function AppHeader({
       
       {showBrand && (
         <div className="hidden md:flex items-center gap-2">
-          <div className="size-6 rounded bg-gradient-to-r from-[var(--gradient-from)] to-[var(--gradient-to)]" />
+          <Image src="/assets/main_logo.png" alt="CMPTasks" width={24} height={24} className="rounded" />
           <span className="text-sm font-semibold">CMPTasks</span>
         </div>
       )}

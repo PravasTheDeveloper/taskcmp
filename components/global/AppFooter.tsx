@@ -6,9 +6,9 @@ interface AppFooterProps {
 }
 
 const defaultLinks = [
-  { label: "Terms", href: "#" },
-  { label: "Privacy", href: "#" },
-  { label: "Contact", href: "#" },
+  { label: "Contact Support", href: "#" },
+  { label: "Terms of Service", href: "#" },
+  { label: "Privacy Policy", href: "#" },
 ]
 
 export default function AppFooter({ 
@@ -31,3 +31,5 @@ export default function AppFooter({
     </footer>
   )
 }
+
+

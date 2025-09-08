@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
+import Image from "next/image"
 import * as React from "react"
 import { Eye, EyeOff } from "lucide-react"
 
@@ -44,7 +45,7 @@ export default function LoginPage() {
     <div className="min-h-svh flex items-center justify-center p-6">
       <Card className="w-full max-w-md shadow-sm">
         <CardHeader className="text-center">
-          <div className="mx-auto size-10 rounded bg-gradient-to-r from-[var(--gradient-from)] to-[var(--gradient-to)]" />
+          <Image src="/assets/main_logo.png" alt="CMPTasks" width={40} height={40} className="mx-auto rounded" />
           <CardTitle className="mt-2">Sign in to CMPTasks</CardTitle>
         </CardHeader>
         <CardContent>
@@ -87,5 +88,6 @@ export default function LoginPage() {
     </div>
   )
 }
+
 
 
