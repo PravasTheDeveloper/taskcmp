@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AuthProvider from "@/components/global/AuthProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +18,7 @@ export const metadata: Metadata = {
   title: "CMPTasks Dashboard",
   description: "A modern, responsive dashboard for managing projects and tasks.",
   icons: {
-    icon: "/asstes/icon.ico",
+    icon: "/assets/icon.ico",
   },
 };
 
@@ -30,7 +32,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <AuthProvider>
+          {children}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -6,16 +6,31 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { toast } from "sonner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
 import Image from "next/image"
+import { Eye, EyeOff } from "lucide-react"
 import * as React from "react"
 import z from "zod"
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
 const commonFields = z.object({
   name: z.string().min(1, "Full name is required"),
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(8, "Use at least 8 characters"),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .max(254, "Email is too long")
+    .refine((v) => emailRegex.test(v), "Please enter a valid email"),
+  password: z
+    .string()
+    .min(8, "Use at least 8 characters")
+    .refine((v) => /[a-z]/.test(v), "Include a lowercase letter")
+    .refine((v) => /[A-Z]/.test(v), "Include an uppercase letter")
+    .refine((v) => /\d/.test(v), "Include a number")
+    .refine((v) => /[^A-Za-z0-9]/.test(v), "Include a special character"),
   confirm: z.string(),
   agree: z.boolean().refine((v) => v, "You must agree to Terms & Conditions"),
 })
@@ -45,15 +60,47 @@ export default function SignupPage() {
   const [errors, setErrors] = React.useState<Record<string, string>>({})
   const [loading, setLoading] = React.useState(false)
   const [success, setSuccess] = React.useState("")
+  const [showPw, setShowPw] = React.useState(false)
+  const [showConfirm, setShowConfirm] = React.useState(false)
+  const [emailStatus, setEmailStatus] = React.useState<"idle" | "invalid" | "checking" | "taken" | "available">("idle")
+  const [pwRules, setPwRules] = React.useState({ len: false, lower: false, upper: false, num: false, special: false })
+
+  React.useEffect(() => {
+    const email = form.email.trim().toLowerCase()
+    const valid = emailRegex.test(email)
+    if (!email) { setEmailStatus("idle"); return }
+    if (!valid) { setEmailStatus("invalid"); return }
+    let cancelled = false
+    setEmailStatus("checking")
+    const id = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`)
+        if (!res.ok) throw new Error()
+        const data = await res.json()
+        if (!cancelled) setEmailStatus(data.exists ? "taken" : "available")
+      } catch {
+        if (!cancelled) setEmailStatus("invalid")
+      }
+    }, 350)
+    return () => { cancelled = true; clearTimeout(id) }
+  }, [form.email])
+
+  React.useEffect(() => {
+    const v = form.password || ""
+    setPwRules({
+      len: v.length >= 8,
+      lower: /[a-z]/.test(v),
+      upper: /[A-Z]/.test(v),
+      num: /\d/.test(v),
+      special: /[^A-Za-z0-9]/.test(v),
+    })
+  }, [form.password])
 
   function onChange<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm({ ...form, [key]: value })
   }
 
-  function strength(pw: string) {
-    const score = [/[a-z]/, /[A-Z]/, /\d/, /[^\w]/].reduce((s, r) => s + Number(r.test(pw)), 0) + Math.min(2, Math.floor(pw.length / 4))
-    return score >= 5 ? "Strong" : score >= 3 ? "Medium" : "Weak"
-  }
+  // strength helper removed (unused)
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -67,10 +114,25 @@ export default function SignupPage() {
       return
     }
     setLoading(true)
+    const res = await fetch("/api/auth/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+      accountType: form.accountType,
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      country: form.country,
+      role: form.role,
+    }) })
+    setLoading(false)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setErrors({ email: data.error || "Failed to create account" })
+      return
+    }
+    toast.success("Signup successful. Redirecting to login...")
+    setSuccess("Account created. You can now sign in.")
     setTimeout(() => {
-      setLoading(false)
-      setSuccess("Account created. Please verify your email.")
-    }, 1000)
+      window.location.href = "/login"
+    }, 1200)
   }
 
   const canSubmit = schema.safeParse(form).success && !loading
@@ -106,18 +168,40 @@ export default function SignupPage() {
             </div>
             <div className="grid gap-1">
               <Label htmlFor="email">Email Address</Label>
-              <Input id="email" type="email" value={form.email} onChange={(e) => onChange("email", e.target.value)} />
+              <Input id="email" type="email" value={form.email} onChange={(e) => onChange("email", e.target.value)} className={emailStatus === "available" ? "border-green-500" : emailStatus === "taken" || emailStatus === "invalid" ? "border-destructive" : ""} />
+              <div className="text-xs">
+                {emailStatus === "checking" && <span className="text-muted-foreground">Checking email...</span>}
+                {emailStatus === "invalid" && <span className="text-destructive">Please enter a valid email</span>}
+                {emailStatus === "taken" && <span className="text-destructive">This email is already registered</span>}
+                {emailStatus === "available" && <span className="text-green-600">This email is available</span>}
+              </div>
               {errors.email && <div className="text-xs text-destructive">{errors.email}</div>}
             </div>
             <div className="grid gap-1">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" value={form.password} onChange={(e) => onChange("password", e.target.value)} />
-              <div className="text-xs text-muted-foreground">Strength: {strength(form.password)}</div>
+              <div className="relative">
+                <Input id="password" type={showPw ? "text" : "password"} value={form.password} onChange={(e) => onChange("password", e.target.value)} className={form.password ? (pwRules.len && pwRules.lower && pwRules.upper && pwRules.num && pwRules.special ? "border-green-500" : "border-destructive") : ""} />
+                <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" aria-label="Toggle password" onClick={() => setShowPw((v) => !v)}>
+                  {showPw ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
+              <div className="text-xs grid grid-cols-1 gap-1 mt-1">
+                <span className={pwRules.len ? "text-green-600" : "text-destructive"}>• At least 8 characters</span>
+                <span className={pwRules.upper ? "text-green-600" : "text-destructive"}>• Uppercase letter</span>
+                <span className={pwRules.lower ? "text-green-600" : "text-destructive"}>• Lowercase letter</span>
+                <span className={pwRules.num ? "text-green-600" : "text-destructive"}>• Number</span>
+                <span className={pwRules.special ? "text-green-600" : "text-destructive"}>• Special character</span>
+              </div>
               {errors.password && <div className="text-xs text-destructive">{errors.password}</div>}
             </div>
             <div className="grid gap-1">
               <Label htmlFor="confirm">Confirm Password</Label>
-              <Input id="confirm" type="password" value={form.confirm} onChange={(e) => onChange("confirm", e.target.value)} />
+              <div className="relative">
+                <Input id="confirm" type={showConfirm ? "text" : "password"} value={form.confirm} onChange={(e) => onChange("confirm", e.target.value)} />
+                <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" aria-label="Toggle confirm password" onClick={() => setShowConfirm((v) => !v)}>
+                  {showConfirm ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
               {errors.confirm && <div className="text-xs text-destructive">{errors.confirm}</div>}
             </div>
             {form.accountType === "client" && (
@@ -148,7 +232,7 @@ export default function SignupPage() {
             </label>
             {errors.agree && <div className="text-xs text-destructive">{errors.agree}</div>}
             <Button disabled={!canSubmit} className="bg-gradient-to-r from-[var(--gradient-from)] to-[var(--gradient-to)] text-white">
-              {loading ? "Creating..." : "Sign Up"}
+              {loading ? ("Creating...") : ("Sign Up")}
             </Button>
           </form>
         </CardContent>

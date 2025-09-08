@@ -9,6 +9,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
 import Image from "next/image"
 import * as React from "react"
+import { signIn } from "next-auth/react"
+import { toast } from "sonner"
 import { Eye, EyeOff } from "lucide-react"
 
 export default function LoginPage() {
@@ -20,7 +22,8 @@ export default function LoginPage() {
   const [loading, setLoading] = React.useState(false)
 
   function validateEmail(v: string) {
-    return /.+@.+\..+/.test(v)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+    return emailRegex.test(v.trim().toLowerCase())
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -35,10 +38,15 @@ export default function LoginPage() {
       return
     }
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    const res = await signIn("credentials", { redirect: false, email, password })
+    setLoading(false)
+    if (res?.error) {
       setError("Invalid email or password. Please try again.")
-    }, 1000)
+      toast.error("Login failed")
+    } else {
+      toast.success("Welcome back!")
+      window.location.href = "/"
+    }
   }
 
   return (

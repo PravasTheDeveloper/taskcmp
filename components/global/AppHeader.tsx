@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Bell, Search, ChevronRight } from "lucide-react"
 import ThemeToggle from "@/components/global/ThemeToggle"
 import Image from "next/image"
+import { useSession, signOut } from "next-auth/react"
 
 interface AppHeaderProps {
   showBrand?: boolean
@@ -29,6 +30,10 @@ export default function AppHeader({
   userName = "You",
   userInitials = "YU"
 }: AppHeaderProps) {
+  const sess = useSession()
+  const sUser = sess.data?.user as (typeof sess.data extends { user: infer U } ? U : { name?: string | null; avatarUrl?: string | null; role?: string }) | undefined
+  const displayName = sUser?.name || userName
+  const avatarUrl = sUser?.avatarUrl
   return (
     <header className="flex h-16 items-center gap-3 border-b px-4 md:px-6 bg-card/60 backdrop-blur-sm">
       <SidebarTrigger />
@@ -59,10 +64,10 @@ export default function AppHeader({
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="pl-1 pr-2">
             <Avatar className="size-7">
-              <AvatarImage alt="User" />
-              <AvatarFallback>{userInitials}</AvatarFallback>
+              <AvatarImage alt="User" src={avatarUrl ?? undefined} />
+              <AvatarFallback>{(displayName || userInitials).slice(0,2).toUpperCase()}</AvatarFallback>
             </Avatar>
-            <span className="ml-2 hidden sm:inline">{userName}</span>
+            <span className="ml-2 hidden sm:inline">{displayName}</span>
             <ChevronRight className="ml-1 size-4 text-muted-foreground" />
           </Button>
         </DropdownMenuTrigger>
@@ -73,7 +78,7 @@ export default function AppHeader({
           <DropdownMenuItem>Notifications</DropdownMenuItem>
           <DropdownMenuItem>Preferences</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/login' })}>Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
